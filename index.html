@@ -196,8 +196,20 @@
 <script type="module">
     // Global variables provided by the environment
     const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-    const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
-    const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+  const firebaseConfig = {
+  apiKey: "AIzaSyBZLoJZVVCVAWafhd4Oh8bhEGV4waN1B5g",
+  authDomain: "studypedia-app.firebaseapp.com",
+  projectId: "studypedia-app",
+  storageBucket: "studypedia-app.firebasestorage.app",
+  messagingSenderId: "793261754970",
+  appId: "1:793261754970:web:49bbd2bea1ab4d46486663",
+  measurementId: "G-6CTGP0MF8Y"
+}; 
+   if (typeof __initial_auth_token !== 'undefined') {
+        await signInWithCustomToken(auth, __initial_auth_token);
+    } else {
+        await signInAnonymously(auth);
+    }
     
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -613,6 +625,7 @@
 </script>
 </body>
 </html>
+
 
 
 
