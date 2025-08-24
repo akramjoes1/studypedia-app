@@ -205,7 +205,7 @@
   appId: "1:793261754970:web:49bbd2bea1ab4d46486663",
   measurementId: "G-6CTGP0MF8Y"
 }; 
-   if (typeof __initial_auth_token !== 'undefined') {
+    if (typeof __initial_auth_token !== 'undefined') {
         await signInWithCustomToken(auth, __initial_auth_token);
     } else {
         await signInAnonymously(auth);
@@ -341,7 +341,7 @@
         } else {
             // User is logged out, sign in anonymously for content viewing
             try {
-                 await signInAnonymously(auth);
+                await signInAnonymously(auth);
             } catch (error) {
                 console.error("Anonymous sign-in failed:", error);
             }
@@ -351,6 +351,29 @@
             academicNav.innerHTML = '';
             const sections = mainContent.querySelectorAll('section');
             sections.forEach(sec => sec.remove());
+        }
+    });
+
+    // Event listener for the Login button
+    document.addEventListener('DOMContentLoaded', () => {
+        const loginButton = document.getElementById('login-btn');
+        if (loginButton) {
+            loginButton.addEventListener('click', async () => {
+                console.log("Login button clicked.");
+                if (!auth.currentUser) {
+                    try {
+                        const userCredential = await signInAnonymously(auth);
+                        console.log("Signed in anonymously via button:", userCredential.user.uid);
+                        // The onAuthStateChanged listener will handle UI updates
+                    } catch (error) {
+                        console.error("Anonymous sign-in failed:", error);
+                        document.getElementById('status-message').textContent = `Error: ${error.message}`;
+                    }
+                } else {
+                    console.log("User is already logged in.");
+                    document.getElementById('status-message').textContent = 'You are already logged in.';
+                }
+            });
         }
     });
 
@@ -378,8 +401,8 @@
                 // Create navigation link
                 const navItem = document.createElement('li');
                 navItem.innerHTML = `<a href="#${sectionId}" class="block p-3 rounded-lg hover:bg-slate-700 transition-colors duration-200">
-                                       ${data.title}
-                                   </a>`;
+                                         ${data.title}
+                                     </a>`;
                 academicNav.appendChild(navItem);
 
                 // Create content section
@@ -625,6 +648,8 @@
 </script>
 </body>
 </html>
+
+
 
 
 
