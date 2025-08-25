@@ -1,3 +1,4 @@
+
 <!--
   Studypedia Dynamic Web Application (Revised Version)
 
@@ -408,18 +409,31 @@
         downloadLinkAd.classList.add('hidden');
         watchAdBtn.classList.remove('hidden');
       });
+      
+      // FIX FOR THE BUTTON NOT WORKING
+      // Set an initial click handler that is always active.
+      authBtn.addEventListener('click', async () => {
+        if (authBtn.textContent.includes('Login')) {
+          toggleAuthModal(true);
+        } else {
+          try {
+            await signOut(auth);
+            showMessage(messageBox, 'Successfully logged out.', false);
+          } catch (error) {
+            showMessage(messageBox, `Logout failed: ${error.message}`, true);
+          }
+        }
+      });
 
       // Handle Authentication State Changes
       onAuthStateChanged(auth, async (user) => {
         if (user) {
           authBtn.textContent = 'Logout';
-          authBtn.onclick = async () => {
-            await signOut(auth);
-          };
+          // Now the single event listener will handle the sign out.
           loadAcademicContent(user.uid);
         } else {
           authBtn.textContent = 'Login / Signup';
-          authBtn.onclick = () => toggleAuthModal(true);
+          // Now the single event listener will handle opening the modal.
           academicNav.innerHTML = '';
           const sections = mainContent.querySelectorAll('section');
           sections.forEach(sec => sec.remove());
