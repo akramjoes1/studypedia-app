@@ -253,33 +253,37 @@
             element.classList.remove(isError ? 'bg-green-900' : 'bg-red-900');
         }
 
-        // Handle Auth Form Submission
-        authForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            showMessage(messageBox, 'Processing...', false);
+      // Handle Auth Form Submission
+authForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    showMessage(messageBox, 'Processing...', false);
 
-            try {
-                if (isLoginMode) {
-                    await signInWithEmailAndPassword(auth, email, password);
-                    showMessage(messageBox, 'Login successful!', false);
-                } else {
-                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                    // Create a new user document in Firestore in a secure, user-private path
-                    await setDoc(doc(db, `artifacts/${appId}/users/${userCredential.user.uid}/user_data/profile`), {
-                        uploaded_docs_count: 0,
-                        downloaded_docs_count: 0,
-                        ad_views: 0
-                    });
-                    showMessage(messageBox, 'Signup successful!', false);
-                }
-                toggleAuthModal(false);
-                authForm.reset();
-            } catch (error) {
-                showMessage(messageBox, `Error: ${error.message}`, true);
-            }
-        });
+    try {
+        if (isLoginMode) {
+            await signInWithEmailAndPassword(auth, email, password);
+            showMessage(messageBox, 'Login successful!', false);
+        } else {
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            await setDoc(doc(db, `artifacts/${appId}/users/${userCredential.user.uid}/user_data/profile`), {
+                uploaded_docs_count: 0,
+                downloaded_docs_count: 0,
+                ad_views: 0
+            });
+            showMessage(messageBox, 'Signup successful!', false);
+        }
+        
+        // Add this line to reload the page and trigger the main content load
+        window.location.reload(); 
+
+        // The following lines become redundant since the page will reload
+        // toggleAuthModal(false);
+        // authForm.reset();
+    } catch (error) {
+        showMessage(messageBox, `Error: ${error.message}`, true);
+    }
+});
 
         // Toggle between Login and Signup modes
         toggleAuthBtn.addEventListener('click', () => {
@@ -489,3 +493,4 @@
     </script>
 </body>
 </html>
+
