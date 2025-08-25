@@ -1,11 +1,10 @@
-
 <!--
-  Studypedia Dynamic Web Application (Revised Version 7)
+  Studypedia Dynamic Web Application (Revised Version 8)
 
   This version fixes the "document.createElement is not a function" error
-  by ensuring all DOM manipulation occurs within the window.onload event listener.
-  This guarantees the Document Object Model is fully loaded and ready before
-  the script attempts to modify it.
+  by renaming a variable in the Firestore loop. The variable "document"
+  was incorrectly shadowing the global Document Object Model, causing
+  the error. Renaming it to "docSnapshot" resolves the conflict.
 
   - Fully responsive layout using Tailwind CSS.
   - Modals for user authentication (Login/Signup) and downloads.
@@ -398,9 +397,9 @@
             </div>
           `;
           
-          sectionsSnapshot.forEach((document) => {
-            const data = document.data();
-            const sectionId = document.id;
+          sectionsSnapshot.forEach((docSnapshot) => {
+            const data = docSnapshot.data();
+            const sectionId = docSnapshot.id;
             
             const navItem = document.createElement('li');
             navItem.innerHTML = `<a href="#${sectionId}" class="block p-3 rounded-lg hover:bg-slate-700 transition-colors duration-200">
