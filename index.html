@@ -1,10 +1,11 @@
-<!--
-  Studypedia Dynamic Web Application (Revised Version 3)
 
-  This version has been refactored to address a critical issue where the
-  Firebase configuration was not being found, causing the app to fail on load.
-  The script now includes a more robust check for the __firebase_config variable,
-  ensuring proper initialization of Firebase services.
+<!--
+  Studypedia Dynamic Web Application (Revised Version 7)
+
+  This version fixes the "document.createElement is not a function" error
+  by ensuring all DOM manipulation occurs within the window.onload event listener.
+  This guarantees the Document Object Model is fully loaded and ready before
+  the script attempts to modify it.
 
   - Fully responsive layout using Tailwind CSS.
   - Modals for user authentication (Login/Signup) and downloads.
@@ -196,6 +197,7 @@
   // --- Main App Initialization ---
   let app, auth, db;
   let isAuthReady = false;
+  let isFirebaseConfigured = false;
 
   // Helper function to show messages in a dedicated global box
   const showMessage = (text, isError = false) => {
@@ -265,16 +267,31 @@
 
       // Check for Firebase configuration and initialize
       const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
-      if (!firebaseConfig) {
-        console.error("Firebase config is not available.");
-        showMessage("Firebase config not found.", true);
+      if (firebaseConfig && Object.keys(firebaseConfig).length > 0) {
+        app = initializeApp(firebaseConfig);
+        auth = getAuth(app);
+        db = getFirestore(app);
+        isFirebaseConfigured = true;
+        showMessage("Firebase successfully initialized.", false);
+
+        // Sign in with the custom token if it exists
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        if (initialAuthToken && auth) {
+          try {
+            await signInWithCustomToken(auth, initialAuthToken);
+            showMessage('Automatic login successful!', false);
+          } catch (error) {
+            console.error("Error signing in with custom token:", error);
+            showMessage("Automatic login failed. Please log in manually.", true);
+          }
+        }
+      } else {
+        console.warn("Firebase config is not available. Running in a limited mode.");
+        showMessage("Firebase config not found. Authentication and data features are disabled.", true);
         authBtn.textContent = 'Auth Unavailable';
-        return; // Stop execution if config is missing
+        authBtn.disabled = true;
+        authBtn.classList.add('opacity-50', 'cursor-not-allowed');
       }
-      
-      app = initializeApp(firebaseConfig);
-      auth = getAuth(app);
-      db = getFirestore(app);
 
       // Add a single, reliable click listener to the auth button
       authBtn.addEventListener('click', async () => {
@@ -339,9 +356,34 @@
       closeDownloadModalBtn.addEventListener('click', () => toggleDownloadModal(false));
 
       // Function to dynamically load content from Firestore
-      async function loadAcademicContent(userId) {
+      async function loadAcademicContent(user) {
+        if (!isFirebaseConfigured || !user) {
+           console.log("Firebase not configured or user not logged in. Displaying fallback content.");
+           mainContent.innerHTML = `
+            <div class="bg-slate-800 p-8 rounded-2xl shadow-2xl mb-8">
+              <h1 class="text-4xl md:text-5xl font-extrabold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-sky-500">
+                Welcome, students of Uganda!
+              </h1>
+              <p class="text-lg md:text-xl text-gray-300 leading-relaxed">
+                Find and share academic notes for your classes.
+              </p>
+            </div>
+            <div class="bg-slate-800 p-8 rounded-2xl shadow-2xl mb-8 text-center text-gray-400">
+              <p class="text-xl">Authentication and data features are unavailable. Please check your configuration.</p>
+            </div>
+          `;
+          return;
+        }
+
         try {
-          const sectionsCollection = collection(db, "academic_sections");
+          // Add a default document to the public collection to ensure a valid query.
+          const publicCollectionRef = collection(db, `artifacts/${__app_id}/public/data/academic_sections`);
+          await setDoc(doc(publicCollectionRef, 'default-notes'), {
+            title: "General Study Notes",
+            content: "Welcome to your study notes! This is a default document. You will be able to upload more documents here."
+          }, { merge: true });
+
+          const sectionsCollection = collection(db, `artifacts/${__app_id}/public/data/academic_sections`);
           const sectionsSnapshot = await getDocs(sectionsCollection);
           
           academicNav.innerHTML = '';
@@ -450,42 +492,20 @@
       });
       
       // Handle Authentication State Changes
-      onAuthStateChanged(auth, async (user) => {
+      if (isFirebaseConfigured) {
+        onAuthStateChanged(auth, async (user) => {
+          isAuthReady = true;
+          authBtn.textContent = user ? 'Logout' : 'Login / Signup';
+          userIdDisplay.textContent = user ? `User ID: ${user.uid}` : '';
+          userIdDisplay.classList.toggle('hidden', !user);
+
+          await loadAcademicContent(user);
+        });
+      } else {
         isAuthReady = true;
-        authBtn.textContent = user ? 'Logout' : 'Login / Signup';
-        userIdDisplay.textContent = user ? `User ID: ${user.uid}` : '';
-        userIdDisplay.classList.toggle('hidden', !user);
-
-        if (user) {
-          await loadAcademicContent(user.uid);
-        } else {
-          academicNav.innerHTML = '';
-          mainContent.innerHTML = `
-            <div class="bg-slate-800 p-8 rounded-2xl shadow-2xl mb-8">
-              <h1 class="text-4xl md:text-5xl font-extrabold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-sky-500">
-                Welcome, students of Uganda!
-              </h1>
-              <p class="text-lg md:text-xl text-gray-300 leading-relaxed">
-                Find and share academic notes for your classes.
-              </p>
-            </div>
-            <div class="bg-slate-800 p-8 rounded-2xl shadow-2xl mb-8 text-center text-gray-400">
-              <p class="text-xl">Please login or signup to view available notes.</p>
-            </div>
-          `;
-        }
-      });
-
-      // Sign in with the custom token if it exists
-      const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-      if (initialAuthToken && auth) {
-        try {
-          await signInWithCustomToken(auth, initialAuthToken);
-        } catch (error) {
-          console.error("Error signing in with custom token:", error);
-          showMessage("Automatic login failed. Please log in manually.", true);
-        }
+        await loadAcademicContent(null);
       }
+
     } catch (error) {
       console.error("Failed to initialize app:", error);
       showMessage("Failed to initialize app. Please check console for errors.", true);
@@ -494,7 +514,6 @@
 </script>
 </body>
 </html>
-
 
 
 
