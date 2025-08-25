@@ -1,28 +1,27 @@
-<!--
-  Studypedia Dynamic Web Application (Revised Version 10)
+  This is a complete, dynamic web application for Studypedia.
+  It includes Firebase for user authentication, content management, and
+  new download features based on payment, file uploads, or watching ads.
 
-  This version explicitly checks for the presence of Firebase configuration
-  and provides a clear status message to the user, making it easier to
-  debug potential environment-related issues.
+  This single HTML file contains:
+  - Responsive layout with Tailwind CSS.
+  - Modals for user login/signup and document downloads.
+  - JavaScript logic to connect to Firebase.
+  - Functions to fetch and display content from Firestore.
+  - The academic sections are now dynamically loaded.
+  - Ad placeholders are included.
 
-  - Fully responsive layout using Tailwind CSS.
-  - Modals for user authentication (Login/Signup) and downloads.
-  - Dynamic content loading from Firestore.
-  - Download options based on payment, file uploads, or watching ads.
+  Changes in this version:
+  - Added <title> and <meta name="description"> tags for Search Engine Optimization (SEO).
 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- SEO: Updated Title and Description for better search engine ranking -->
   <title>Studypedia - Free Notes for Students in Uganda</title>
   <meta name="description" content="Access free academic notes for Certificate, Diploma, and Bachelors students in Uganda. Study guides and resources available for everyone.">
 
-  <!-- Inter font for a clean, modern look -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  
   <!-- Tailwind CSS CDN for styling -->
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
@@ -31,13 +30,20 @@
       font-family: 'Inter', sans-serif;
     }
   </style>
+  <!-- Firebase SDKs -->
+  <script type="module" src="https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js"></script>
+  <script type="module" src="https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js"></script>
+  <script type="module" src="https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js"></script>
 </head>
 <body class="bg-slate-900 text-gray-100 min-h-screen">
 
-  <!-- Main layout container -->
+  <!-- Main layout container: Using flexbox to create a sidebar and a main content area -->
   <div class="flex flex-col lg:flex-row min-h-screen">
 
-    <!-- Left Sidebar/Menu -->
+    <!--
+      Left Sidebar/Menu
+      This section is for navigation links to different academic levels.
+    -->
     <aside class="bg-slate-800 p-6 lg:p-8 lg:w-64 w-full flex-shrink-0 flex flex-col">
       <!-- Logo or Site Title -->
       <div class="mb-8">
@@ -49,9 +55,8 @@
       <!-- User Authentication UI -->
       <div id="auth-ui" class="space-y-4 mb-8">
         <button id="auth-btn" class="w-full bg-indigo-600 text-white font-semibold py-2 px-4 rounded-full shadow-lg hover:bg-indigo-500 transition-colors">
-          Loading...
+          Login / Signup
         </button>
-        <p id="user-id-display" class="text-sm text-gray-400 text-center truncate hidden"></p>
       </div>
 
       <!-- Navigation Menu (dynamic content) -->
@@ -59,13 +64,16 @@
         <!-- Links will be dynamically inserted here -->
       </nav>
 
-      <!-- AD SPACE IN SIDEBAR: Placeholder for an ad. -->
+      <!--
+        AD SPACE IN SIDEBAR: Placeholder for an ad.
+        Replace the entire div below with your Google AdSense ad code.
+      -->
       <div class="mt-auto bg-gray-800 text-gray-400 p-4 rounded-xl flex items-center justify-center border border-gray-700">
         <p class="text-sm font-semibold text-center">Google AdSense - Sidebar Ad</p>
       </div>
     </aside>
 
-    <!-- Main Content Area -->
+    <!-- Main Content Area (dynamic content) -->
     <main id="main-content" class="flex-grow p-6 lg:p-12 overflow-y-auto">
       <!-- Welcome Section -->
       <div class="bg-slate-800 p-8 rounded-2xl shadow-2xl mb-8">
@@ -76,13 +84,13 @@
           Find and share academic notes for your classes.
         </p>
       </div>
-      <!-- Firebase status message will be inserted here dynamically -->
-      <div id="firebase-status" class="mb-4 text-center p-4 rounded-lg hidden"></div>
       <!-- Dynamically loaded academic sections will be inserted here -->
     </main>
   </div>
   
-  <!-- Authentication Modal -->
+  <!--
+    Authentication Modal
+  -->
   <div id="auth-modal" class="fixed inset-0 bg-black bg-opacity-75 hidden items-center justify-center p-4 z-50">
     <div class="bg-slate-800 p-8 rounded-2xl shadow-2xl w-full max-w-sm">
       <div class="flex justify-between items-center mb-4">
@@ -105,11 +113,13 @@
           Don't have an account? Sign Up
         </button>
       </div>
-      <div id="modal-message-box" class="mt-4 text-center p-2 rounded-md hidden"></div>
+      <div id="message-box" class="mt-4 text-center p-2 rounded-md hidden"></div>
     </div>
   </div>
 
-  <!-- Download Modal -->
+  <!--
+    Download Modal
+  -->
   <div id="download-modal" class="fixed inset-0 bg-black bg-opacity-75 hidden items-center justify-center p-4 z-50">
     <div class="bg-slate-800 p-8 rounded-2xl shadow-2xl w-full max-w-lg">
       <div class="flex justify-between items-center mb-6">
@@ -177,43 +187,59 @@
     </div>
   </div>
 
-  <!-- Global Message Box -->
-  <div id="global-message-box" class="fixed bottom-4 right-4 bg-gray-800 text-white p-4 rounded-lg shadow-xl hidden z-50"></div>
-
-
-<!--
-  Firebase and App Logic
--->
 <script type="module">
-  // Firebase SDKs
+  // IMPORTANT: Replace the placeholder values below with your actual Firebase project configuration.
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_AUTH_DOMAIN",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_STORAGE_BUCKET",
+    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+    appId: "YOUR_APP_ID"
+  };
+
+  // Import Firebase modules
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
-  import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
-  import { getFirestore, collection, getDocs, doc, setDoc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
+  import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
+  import { getFirestore, collection, getDocs, doc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
+
+  // Initialize Firebase and get service handles
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  // Get DOM elements
+  const authBtn = document.getElementById('auth-btn');
+  const authModal = document.getElementById('auth-modal');
+  const closeModalBtn = document.getElementById('close-modal-btn');
+  const authForm = document.getElementById('auth-form');
+  const authTitle = document.getElementById('auth-title');
+  const submitBtn = document.getElementById('submit-btn');
+  const toggleAuthBtn = document.getElementById('toggle-auth-btn');
+  const messageBox = document.getElementById('message-box');
+  const academicNav = document.getElementById('academic-nav');
+  const mainContent = document.getElementById('main-content');
+  
+  // Download Modal Elements
+  const downloadModal = document.getElementById('download-modal');
+  const closeDownloadModalBtn = document.getElementById('close-download-modal-btn');
+  const payMonthlyBtn = document.getElementById('pay-monthly-btn');
+  const payYearlyBtn = document.getElementById('pay-yearly-btn');
+  const paymentDetails = document.getElementById('payment-details');
+  const uploadBtn = document.getElementById('upload-btn');
+  const uploadCountEl = document.getElementById('upload-count');
+  const documentUpload = document.getElementById('document-upload');
+  const watchAdBtn = document.getElementById('watch-ad-btn');
+  const adCounterEl = document.getElementById('ad-counter');
+  const downloadLinkAd = document.getElementById('download-link-ad');
+  const downloadMessageBox = document.getElementById('download-message-box');
 
   // State
   let isLoginMode = true;
   let currentDownloadSectionId = null;
 
-  // --- Main App Initialization ---
-  let app, auth, db;
-  let isAuthReady = false;
-  let isFirebaseConfigured = false;
-
-  // Helper function to show messages in a dedicated global box
-  const showMessage = (text, isError = false) => {
-    const messageBox = document.getElementById('global-message-box');
-    if (!messageBox) return;
-    messageBox.textContent = text;
-    messageBox.classList.remove('hidden', 'bg-red-900', 'bg-green-900');
-    messageBox.classList.add('block', isError ? 'bg-red-900' : 'bg-green-900');
-    setTimeout(() => {
-      messageBox.classList.add('hidden');
-    }, 5000);
-  };
-
   // Function to show/hide the auth modal
-  const toggleAuthModal = (show) => {
-    const authModal = document.getElementById('auth-modal');
+  function toggleAuthModal(show) {
     if (show) {
       authModal.classList.remove('hidden');
       authModal.classList.add('flex');
@@ -221,12 +247,10 @@
       authModal.classList.remove('flex');
       authModal.classList.add('hidden');
     }
-  };
+  }
 
   // Function to show/hide the download modal
-  const toggleDownloadModal = (show, sectionId = null) => {
-    const downloadModal = document.getElementById('download-modal');
-    const paymentDetails = document.getElementById('payment-details');
+  function toggleDownloadModal(show, sectionId = null) {
     if (show) {
       currentDownloadSectionId = sectionId;
       downloadModal.classList.remove('hidden');
@@ -235,293 +259,245 @@
       currentDownloadSectionId = null;
       downloadModal.classList.remove('flex');
       downloadModal.classList.add('hidden');
-      paymentDetails.classList.add('hidden');
     }
-  };
+  }
 
-  window.onload = async () => {
+  // Function to display messages in the modal
+  function showMessage(element, text, isError = false) {
+    element.textContent = text;
+    element.classList.remove('hidden');
+    element.classList.add(isError ? 'bg-red-900' : 'bg-green-900');
+    element.classList.remove(isError ? 'bg-green-900' : 'bg-red-900');
+  }
+
+  // Handle Auth Form Submission
+  authForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    showMessage(messageBox, 'Processing...', false);
+
     try {
-      // Get DOM elements after the window has loaded
-      const authBtn = document.getElementById('auth-btn');
-      const authForm = document.getElementById('auth-form');
-      const authTitle = document.getElementById('auth-title');
-      const submitBtn = document.getElementById('submit-btn');
-      const toggleAuthBtn = document.getElementById('toggle-auth-btn');
-      const academicNav = document.getElementById('academic-nav');
-      const mainContent = document.getElementById('main-content');
-      const userIdDisplay = document.getElementById('user-id-display');
-      const closeAuthModalBtn = document.getElementById('close-modal-btn');
-      const firebaseStatusEl = document.getElementById('firebase-status');
-      
-      // Download Modal Elements
-      const closeDownloadModalBtn = document.getElementById('close-download-modal-btn');
-      const payMonthlyBtn = document.getElementById('pay-monthly-btn');
-      const payYearlyBtn = document.getElementById('pay-yearly-btn');
-      const paymentDetails = document.getElementById('payment-details');
-      const uploadBtn = document.getElementById('upload-btn');
-      const uploadCountEl = document.getElementById('upload-count');
-      const documentUpload = document.getElementById('document-upload');
-      const watchAdBtn = document.getElementById('watch-ad-btn');
-      const adCounterEl = document.getElementById('ad-counter');
-      const downloadLinkAd = document.getElementById('download-link-ad');
-      const downloadMessageBox = document.getElementById('download-message-box');
-
-      // Check for Firebase configuration and initialize
-      const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
-      if (firebaseConfig && Object.keys(firebaseConfig).length > 0) {
-        app = initializeApp(firebaseConfig);
-        auth = getAuth(app);
-        db = getFirestore(app);
-        isFirebaseConfigured = true;
-        console.log("Firebase successfully initialized.");
-        firebaseStatusEl.textContent = '✅ Firebase is configured and connected!';
-        firebaseStatusEl.classList.remove('hidden', 'bg-red-900');
-        firebaseStatusEl.classList.add('block', 'bg-green-900');
-
-        // Sign in with the custom token if it exists
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-        if (initialAuthToken && auth) {
-          try {
-            await signInWithCustomToken(auth, initialAuthToken);
-            showMessage('Automatic login successful!', false);
-          } catch (error) {
-            console.error("Error signing in with custom token:", error);
-            showMessage("Automatic login failed. Please log in manually.", true);
-          }
-        }
+      if (isLoginMode) {
+        await signInWithEmailAndPassword(auth, email, password);
+        showMessage(messageBox, 'Login successful!', false);
       } else {
-        console.warn("Firebase config is not available. Running in a limited mode.");
-        firebaseStatusEl.textContent = '❌ Firebase config not found. Features are disabled.';
-        firebaseStatusEl.classList.remove('hidden', 'bg-green-900');
-        firebaseStatusEl.classList.add('block', 'bg-red-900');
-        authBtn.textContent = 'Auth Unavailable';
-        authBtn.disabled = true;
-        authBtn.classList.add('opacity-50', 'cursor-not-allowed');
-      }
-
-      // Add a single, reliable click listener to the auth button
-      authBtn.addEventListener('click', async () => {
-        if (!isAuthReady) {
-          showMessage('Authentication is still loading. Please wait a moment.', true);
-          return;
-        }
-        if (auth.currentUser) {
-          // User is logged in, so log them out
-          try {
-            await signOut(auth);
-            showMessage('Successfully logged out.', false);
-          } catch (error) {
-            showMessage(`Logout failed: ${error.message}`, true);
-          }
-        } else {
-          // User is not logged in, so show the auth modal
-          toggleAuthModal(true);
-        }
-      });
-
-      // Handle Auth Form Submission
-      authForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        const modalMessageBox = document.getElementById('modal-message-box');
-        modalMessageBox.textContent = 'Processing...';
-        modalMessageBox.classList.remove('hidden');
-
-        try {
-          if (isLoginMode) {
-            await signInWithEmailAndPassword(auth, email, password);
-            showMessage('Login successful!', false);
-          } else {
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            await setDoc(doc(db, `artifacts/${__app_id}/users/${userCredential.user.uid}/user_data`, 'profile'), {
-              uploaded_docs_count: 0,
-              downloaded_docs_count: 0,
-              ad_views: 0
-            });
-            showMessage('Signup successful!', false);
-          }
-          toggleAuthModal(false);
-          authForm.reset();
-        } catch (error) {
-          modalMessageBox.textContent = `Error: ${error.message}`;
-          modalMessageBox.classList.add('bg-red-900', 'text-white');
-        }
-      });
-
-      // Toggle between Login and Signup modes
-      toggleAuthBtn.addEventListener('click', () => {
-        isLoginMode = !isLoginMode;
-        authTitle.textContent = isLoginMode ? 'Login' : 'Signup';
-        submitBtn.textContent = isLoginMode ? 'Login' : 'Signup';
-        toggleAuthBtn.textContent = isLoginMode ? "Don't have an account? Sign Up" : "Already have an account? Login";
-      });
-
-      // Close Modal Buttons
-      closeAuthModalBtn.addEventListener('click', () => toggleAuthModal(false));
-      closeDownloadModalBtn.addEventListener('click', () => toggleDownloadModal(false));
-
-      // Function to dynamically load content from Firestore
-      async function loadAcademicContent(user) {
-        if (!isFirebaseConfigured || !user) {
-           console.log("Firebase not configured or user not logged in. Displaying fallback content.");
-           mainContent.innerHTML = `
-            <div class="bg-slate-800 p-8 rounded-2xl shadow-2xl mb-8">
-              <h1 class="text-4xl md:text-5xl font-extrabold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-sky-500">
-                Welcome, students of Uganda!
-              </h1>
-              <p class="text-lg md:text-xl text-gray-300 leading-relaxed">
-                Find and share academic notes for your classes.
-              </p>
-            </div>
-            <div class="bg-slate-800 p-8 rounded-2xl shadow-2xl mb-8 text-center text-gray-400">
-              <p class="text-xl">Authentication and data features are unavailable. Please check your configuration.</p>
-            </div>
-          `;
-          return;
-        }
-
-        try {
-          // Add a default document to the public collection to ensure a valid query.
-          const publicCollectionRef = collection(db, `artifacts/${__app_id}/public/data/academic_sections`);
-          await setDoc(doc(publicCollectionRef, 'default-notes'), {
-            title: "General Study Notes",
-            content: "Welcome to your study notes! This is a default document. You will be able to upload more documents here."
-          }, { merge: true });
-
-          const sectionsCollection = collection(db, `artifacts/${__app_id}/public/data/academic_sections`);
-          const sectionsSnapshot = await getDocs(sectionsCollection);
-          
-          academicNav.innerHTML = '';
-          mainContent.innerHTML = `
-            <div class="bg-slate-800 p-8 rounded-2xl shadow-2xl mb-8">
-              <h1 class="text-4xl md:text-5xl font-extrabold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-sky-500">
-                Welcome, students of Uganda!
-              </h1>
-              <p class="text-lg md:text-xl text-gray-300 leading-relaxed">
-                Find and share academic notes for your classes.
-              </p>
-            </div>
-          `;
-          
-          sectionsSnapshot.forEach((docSnapshot) => {
-            const data = docSnapshot.data();
-            const sectionId = docSnapshot.id;
-            
-            const navItem = document.createElement('li');
-            navItem.innerHTML = `<a href="#${sectionId}" class="block p-3 rounded-lg hover:bg-slate-700 transition-colors duration-200">
-                                   ${data.title}
-                                </a>`;
-            academicNav.appendChild(navItem);
-
-            const sectionEl = document.createElement('section');
-            sectionEl.id = sectionId;
-            sectionEl.classList.add('bg-slate-800', 'p-8', 'rounded-2xl', 'shadow-2xl', 'mb-8');
-            sectionEl.innerHTML = `
-              <h2 class="text-3xl md:text-4xl font-bold mb-4 text-teal-400">
-                ${data.title}
-              </h2>
-              <p class="text-lg text-gray-300 leading-relaxed">
-                ${data.content}
-              </p>
-              <button class="mt-4 px-6 py-3 bg-green-600 text-white font-semibold rounded-full shadow-lg hover:bg-green-500 transition-colors download-btn">
-                Download
-              </button>
-            `;
-            mainContent.appendChild(sectionEl);
-          });
-          
-          document.querySelectorAll('.download-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-              const sectionId = e.target.closest('section').id;
-              toggleDownloadModal(true, sectionId);
-            });
-          });
-          
-        } catch (error) {
-          console.error("Error loading academic content: ", error);
-          showMessage("Error loading content. Check your Firebase setup.", true);
-        }
-      }
-
-      // --- Download Modal Logic ---
-      let adCount = 0;
-      payMonthlyBtn.addEventListener('click', () => {
-        paymentDetails.classList.remove('hidden');
-        showMessage('You selected a monthly plan. Follow the instructions to complete payment.', false);
-      });
-      
-      payYearlyBtn.addEventListener('click', () => {
-        paymentDetails.classList.remove('hidden');
-        showMessage('You selected a yearly plan. Follow the instructions to complete payment.', false);
-      });
-
-      uploadBtn.addEventListener('click', async () => {
-        const fileCount = documentUpload.files.length;
-        if (fileCount >= 3) {
-          showMessage('Upload successful! You can now download.', false);
-          console.log(`User uploaded ${fileCount} files for document: ${currentDownloadSectionId}`);
-        } else {
-          showMessage(`Please upload at least 3 documents. You have uploaded ${fileCount}.`, true);
-        }
-      });
-      
-      documentUpload.addEventListener('change', () => {
-        uploadCountEl.textContent = `Uploaded ${documentUpload.files.length} of 3 documents.`;
-        uploadCountEl.classList.remove('hidden');
-      });
-
-      watchAdBtn.addEventListener('click', () => {
-        if (adCount < 10) {
-          adCount++;
-          adCounterEl.textContent = adCount;
-          showMessage(`Ad ${adCount} of 10 viewed. Keep going!`, false);
-          if (adCount === 10) {
-            showMessage('You have watched all 10 ads! The download button is now available.', false);
-            downloadLinkAd.classList.remove('hidden');
-            watchAdBtn.classList.add('hidden');
-          }
-        }
-      });
-
-      downloadLinkAd.addEventListener('click', () => {
-        showMessage('Download is ready!', false);
-        // Simulate download
-        setTimeout(() => {
-          console.log(`User watched 10 ads for document: ${currentDownloadSectionId}`);
-          toggleDownloadModal(false);
-          adCount = 0;
-          adCounterEl.textContent = adCount;
-          downloadLinkAd.classList.add('hidden');
-          watchAdBtn.classList.remove('hidden');
-        }, 1000);
-      });
-      
-      // Handle Authentication State Changes
-      if (isFirebaseConfigured) {
-        onAuthStateChanged(auth, async (user) => {
-          isAuthReady = true;
-          authBtn.textContent = user ? 'Logout' : 'Login / Signup';
-          userIdDisplay.textContent = user ? `User ID: ${user.uid}` : '';
-          userIdDisplay.classList.toggle('hidden', !user);
-
-          await loadAcademicContent(user);
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        // Create a new user document in Firestore
+        await setDoc(doc(db, "users", userCredential.user.uid), {
+          uploaded_docs_count: 0,
+          downloaded_docs_count: 0,
+          ad_views: 0
         });
-      } else {
-        isAuthReady = true;
-        await loadAcademicContent(null);
+        showMessage(messageBox, 'Signup successful!', false);
       }
-
+      toggleAuthModal(false);
+      authForm.reset();
     } catch (error) {
-      console.error("Failed to initialize app:", error);
-      showMessage("Failed to initialize app. Please check console for errors.", true);
+      showMessage(messageBox, `Error: ${error.message}`, true);
     }
-  };
+  });
+
+  // Toggle between Login and Signup modes
+  toggleAuthBtn.addEventListener('click', () => {
+    isLoginMode = !isLoginMode;
+    authTitle.textContent = isLoginMode ? 'Login' : 'Signup';
+    submitBtn.textContent = isLoginMode ? 'Login' : 'Signup';
+    toggleAuthBtn.textContent = isLoginMode ? "Don't have an account? Sign Up" : "Already have an account? Login";
+  });
+
+  // Close Modal Buttons
+  closeModalBtn.addEventListener('click', () => toggleAuthModal(false));
+  closeDownloadModalBtn.addEventListener('click', () => {
+      toggleDownloadModal(false);
+      paymentDetails.classList.add('hidden');
+  });
+
+  // Handle Authentication State Changes
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      // User is logged in
+      authBtn.textContent = 'Logout';
+      authBtn.onclick = async () => {
+        await signOut(auth);
+        // Reload page or update UI as needed
+      };
+      loadAcademicContent(user.uid); // Pass user ID to load content and check status
+    } else {
+      // User is logged out
+      authBtn.textContent = 'Login / Signup';
+      authBtn.onclick = () => toggleAuthModal(true);
+      // Clear dynamic content
+      academicNav.innerHTML = '';
+      const sections = mainContent.querySelectorAll('section');
+      sections.forEach(sec => sec.remove());
+    }
+  });
+
+  // Function to dynamically load content from Firestore
+  async function loadAcademicContent(userId) {
+    try {
+      const sectionsCollection = collection(db, "academic_sections");
+      const sectionsSnapshot = await getDocs(sectionsCollection);
+      
+      // Clear existing dynamic content
+      academicNav.innerHTML = '';
+      const existingSections = mainContent.querySelectorAll('section');
+      existingSections.forEach(sec => sec.remove());
+      
+      // Get user data
+      const userRef = doc(db, "users", userId);
+      const userDoc = await getDoc(userRef);
+      const userData = userDoc.data();
+
+      // Create navigation links and content sections
+      sectionsSnapshot.forEach((document) => {
+        const data = document.data();
+        const sectionId = document.id;
+        
+        // Create navigation link
+        const navItem = document.createElement('li');
+        navItem.innerHTML = `<a href="#${sectionId}" class="block p-3 rounded-lg hover:bg-slate-700 transition-colors duration-200">
+                               ${data.title}
+                            </a>`;
+        academicNav.appendChild(navItem);
+
+        // Create content section
+        const sectionEl = document.createElement('section');
+        sectionEl.id = sectionId;
+        sectionEl.classList.add('bg-slate-800', 'p-8', 'rounded-2xl', 'shadow-2xl', 'mb-8');
+        sectionEl.innerHTML = `
+          <h2 class="text-3xl md:text-4xl font-bold mb-4 text-teal-400">
+            ${data.title}
+          </h2>
+          <p class="text-lg text-gray-300 leading-relaxed">
+            ${data.content}
+          </p>
+          <button class="mt-4 px-6 py-3 bg-green-600 text-white font-semibold rounded-full shadow-lg hover:bg-green-500 transition-colors download-btn">
+            Download
+          </button>
+        `;
+        mainContent.appendChild(sectionEl);
+      });
+      
+      // Add event listeners to the new download buttons
+      document.querySelectorAll('.download-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const sectionId = e.target.closest('section').id;
+          toggleDownloadModal(true, sectionId);
+        });
+      });
+      
+    } catch (error) {
+      console.error("Error loading academic content: ", error);
+      showMessage(messageBox, "Error loading content. Check your Firebase setup.", true);
+    }
+  }
+
+  // --- Download Modal Logic ---
+
+  // Handle Pay to Download
+  payMonthlyBtn.addEventListener('click', () => {
+    paymentDetails.classList.remove('hidden');
+    showMessage(downloadMessageBox, 'You selected a monthly plan. Follow the instructions to complete payment.', false);
+  });
+  
+  payYearlyBtn.addEventListener('click', () => {
+    paymentDetails.classList.remove('hidden');
+    showMessage(downloadMessageBox, 'You selected a yearly plan. Follow the instructions to complete payment.', false);
+  });
+
+  // Handle Upload Documents
+  uploadBtn.addEventListener('click', async () => {
+    const fileCount = documentUpload.files.length;
+    if (fileCount >= 3) {
+      showMessage(downloadMessageBox, 'Upload successful! You can now download.', false);
+      // Here you would implement the actual download logic
+      // For this example, we'll just log it
+      console.log(`User uploaded ${fileCount} files for document: ${currentDownloadSectionId}`);
+      alert("Download is ready!");
+    } else {
+      showMessage(downloadMessageBox, `Please upload at least 3 documents. You have uploaded ${fileCount}.`, true);
+    }
+  });
+  
+  // Show uploaded file count
+  documentUpload.addEventListener('change', () => {
+    uploadCountEl.textContent = `Uploaded ${documentUpload.files.length} of 3 documents.`;
+    uploadCountEl.classList.remove('hidden');
+  });
+
+  // Handle Watch Ads
+  let adCount = 0;
+  watchAdBtn.addEventListener('click', () => {
+    if (adCount < 10) {
+      adCount++;
+      adCounterEl.textContent = adCount;
+      showMessage(downloadMessageBox, `Ad ${adCount} of 10 viewed. Keep going!`, false);
+      if (adCount === 10) {
+        showMessage(downloadMessageBox, 'You have watched all 10 ads! The download button is now available.', false);
+        downloadLinkAd.classList.remove('hidden');
+        watchAdBtn.classList.add('hidden');
+      }
+    }
+  });
+
+  downloadLinkAd.addEventListener('click', () => {
+    alert("Download is ready!");
+    console.log(`User watched 10 ads for document: ${currentDownloadSectionId}`);
+    toggleDownloadModal(false);
+    // Reset ad counter for next download
+    adCount = 0;
+    adCounterEl.textContent = adCount;
+    downloadLinkAd.classList.add('hidden');
+    watchAdBtn.classList.remove('hidden');
+  });
+
+  // --- Setup Function (Run Once) ---
+  
+  // This is a setup function to show the user how to add initial data to Firestore.
+  async function addInitialData() {
+    try {
+      const sections = [
+        {
+          id: 'certificate',
+          title: 'Certificate',
+          content: 'This section contains notes and study materials for Certificate-level classes. You will find foundational subjects to help you succeed.',
+          download_url: 'https://example.com/certificate-notes.pdf'
+        },
+        {
+          id: 'diploma',
+          title: 'Diploma',
+          content: 'Explore advanced topics and specialized subjects for your Diploma studies. Find in-depth notes and collaborate with your peers.',
+          download_url: 'https://example.com/diploma-notes.pdf'
+        },
+        {
+          id: 'bachelors',
+          title: 'Bachelors',
+          content: 'Access comprehensive resources for Bachelors-level programs. Dive deep into research and expert-level notes to master your field.',
+          download_url: 'https://example.com/bachelors-notes.pdf'
+        }
+      ];
+
+      for (const section of sections) {
+        await setDoc(doc(db, "academic_sections", section.id), {
+          title: section.title,
+          content: section.content,
+          download_url: section.download_url
+        });
+      }
+      console.log("Initial data added to Firestore!");
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
+  }
+
+  // Uncomment the line below to add initial data to your Firestore database.
+  // You only need to run this ONCE after you've set up your project.
+  // addInitialData();
+
 </script>
 </body>
 </html>
-
-
-
 
 
