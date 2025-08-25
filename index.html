@@ -1,10 +1,9 @@
 <!--
-  Studypedia Dynamic Web Application (Revised Version 8)
+  Studypedia Dynamic Web Application (Revised Version 10)
 
-  This version fixes the "document.createElement is not a function" error
-  by renaming a variable in the Firestore loop. The variable "document"
-  was incorrectly shadowing the global Document Object Model, causing
-  the error. Renaming it to "docSnapshot" resolves the conflict.
+  This version explicitly checks for the presence of Firebase configuration
+  and provides a clear status message to the user, making it easier to
+  debug potential environment-related issues.
 
   - Fully responsive layout using Tailwind CSS.
   - Modals for user authentication (Login/Signup) and downloads.
@@ -77,6 +76,8 @@
           Find and share academic notes for your classes.
         </p>
       </div>
+      <!-- Firebase status message will be inserted here dynamically -->
+      <div id="firebase-status" class="mb-4 text-center p-4 rounded-lg hidden"></div>
       <!-- Dynamically loaded academic sections will be inserted here -->
     </main>
   </div>
@@ -250,6 +251,7 @@
       const mainContent = document.getElementById('main-content');
       const userIdDisplay = document.getElementById('user-id-display');
       const closeAuthModalBtn = document.getElementById('close-modal-btn');
+      const firebaseStatusEl = document.getElementById('firebase-status');
       
       // Download Modal Elements
       const closeDownloadModalBtn = document.getElementById('close-download-modal-btn');
@@ -271,7 +273,10 @@
         auth = getAuth(app);
         db = getFirestore(app);
         isFirebaseConfigured = true;
-        showMessage("Firebase successfully initialized.", false);
+        console.log("Firebase successfully initialized.");
+        firebaseStatusEl.textContent = '✅ Firebase is configured and connected!';
+        firebaseStatusEl.classList.remove('hidden', 'bg-red-900');
+        firebaseStatusEl.classList.add('block', 'bg-green-900');
 
         // Sign in with the custom token if it exists
         const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
@@ -286,7 +291,9 @@
         }
       } else {
         console.warn("Firebase config is not available. Running in a limited mode.");
-        showMessage("Firebase config not found. Authentication and data features are disabled.", true);
+        firebaseStatusEl.textContent = '❌ Firebase config not found. Features are disabled.';
+        firebaseStatusEl.classList.remove('hidden', 'bg-green-900');
+        firebaseStatusEl.classList.add('block', 'bg-red-900');
         authBtn.textContent = 'Auth Unavailable';
         authBtn.disabled = true;
         authBtn.classList.add('opacity-50', 'cursor-not-allowed');
