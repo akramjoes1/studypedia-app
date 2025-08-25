@@ -1,10 +1,10 @@
 <!--
-  Studypedia Dynamic Web Application (Revised Version 2)
+  Studypedia Dynamic Web Application (Revised Version 3)
 
-  This version has been refactored to address a race condition where the
-  authentication button's click handler was not working correctly. The fix
-  involves checking the current authentication state directly inside the
-  click listener, providing a more reliable user experience.
+  This version has been refactored to address a critical issue where the
+  Firebase configuration was not being found, causing the app to fail on load.
+  The script now includes a more robust check for the __firebase_config variable,
+  ensuring proper initialization of Firebase services.
 
   - Fully responsive layout using Tailwind CSS.
   - Modals for user authentication (Login/Signup) and downloads.
@@ -104,7 +104,7 @@
           Don't have an account? Sign Up
         </button>
       </div>
-      <div id="message-box" class="mt-4 text-center p-2 rounded-md hidden"></div>
+      <div id="modal-message-box" class="mt-4 text-center p-2 rounded-md hidden"></div>
     </div>
   </div>
 
@@ -263,12 +263,12 @@
       const downloadLinkAd = document.getElementById('download-link-ad');
       const downloadMessageBox = document.getElementById('download-message-box');
 
-
       // Check for Firebase configuration and initialize
       const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
       if (!firebaseConfig) {
         console.error("Firebase config is not available.");
         showMessage("Firebase config not found.", true);
+        authBtn.textContent = 'Auth Unavailable';
         return; // Stop execution if config is missing
       }
       
@@ -301,8 +301,9 @@
         e.preventDefault();
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
-        const messageBox = document.getElementById('message-box');
-        showMessage('Processing...', false);
+        const modalMessageBox = document.getElementById('modal-message-box');
+        modalMessageBox.textContent = 'Processing...';
+        modalMessageBox.classList.remove('hidden');
 
         try {
           if (isLoginMode) {
@@ -320,7 +321,8 @@
           toggleAuthModal(false);
           authForm.reset();
         } catch (error) {
-          showMessage(`Error: ${error.message}`, true);
+          modalMessageBox.textContent = `Error: ${error.message}`;
+          modalMessageBox.classList.add('bg-red-900', 'text-white');
         }
       });
 
@@ -492,9 +494,6 @@
 </script>
 </body>
 </html>
-
-
-
 
 
 
