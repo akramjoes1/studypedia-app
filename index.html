@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -269,7 +271,6 @@
         import { getAuth, signInAnonymously, signInWithCustomToken, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         // IMPORTANT: Replace the placeholder values below with your actual firebase project configuration.
-        // The one in the screenshot is valid, but for security, you should use your own.
         // It's crucial to have this configuration correct.
         const firebaseConfig = {
             apiKey: "AIzaSyBJZx5V3QVVxWathhd2zHbIeGvwAI195G",
@@ -292,7 +293,6 @@
         const authForm = document.getElementById('auth-form');
         const modalTitle = document.getElementById('modal-title');
         const submitBtn = document.getElementById('submit-btn');
-        const toggleAuthModeLink = document.getElementById('toggle-auth-mode');
         const toggleAuthModeText = document.getElementById('toggle-auth-mode-text');
         const emailInput = document.getElementById('email');
         const passwordInput = document.getElementById('password');
@@ -347,26 +347,30 @@
 
         authForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            submitBtn.textContent = 'Loading...';
+            submitBtn.disabled = true;
+            displayMessage('Loading...', false);
+
             const email = emailInput.value;
             const password = passwordInput.value;
-            displayMessage('Loading...', false);
 
             try {
                 if (isLoginMode) {
-                    // Sign in the user
                     await signInWithEmailAndPassword(auth, email, password);
                 } else {
-                    // Create a new user account
                     await createUserWithEmailAndPassword(auth, email, password);
                 }
                 displayMessage('Success! You are now authenticated.', false);
                 toggleModal(false);
             } catch (error) {
                 displayMessage(`Error: ${error.message}`);
+            } finally {
+                submitBtn.textContent = isLoginMode ? 'Login' : 'Sign Up';
+                submitBtn.disabled = false;
             }
         });
 
-        // Use a single event listener for the dynamic link
+        // Use a single event listener for the dynamic link on the parent element
         document.addEventListener('click', (event) => {
             if (event.target && event.target.id === 'toggle-auth-mode') {
                 toggleAuthMode();
@@ -376,13 +380,11 @@
         // Listen for authentication state changes
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                // User is signed in
                 console.log('User signed in:', user.email);
                 userDetails.classList.remove('hidden');
                 userEmail.textContent = user.email;
                 loginSignupBtn.classList.add('hidden');
             } else {
-                // User is signed out
                 console.log('User signed out.');
                 userDetails.classList.add('hidden');
                 loginSignupBtn.classList.remove('hidden');
@@ -405,5 +407,4 @@
     </script>
 </body>
 </html>
-
 
