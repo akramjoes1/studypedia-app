@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -270,18 +268,16 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-        // IMPORTANT: Replace the placeholder values below with your actual firebase project configuration.
-        // It's crucial to have this configuration correct.
-        const firebaseConfig = {
-            apiKey: "AIzaSyBJZx5V3QVVxWathhd2zHbIeGvwAI195G",
-            authDomain: "studypedia-app.firebaseapp.com",
-            projectId: "studypedia-app",
-            storageBucket: "studypedia-app.firebaseapp.com",
-            messagingSenderId: "793269754970",
-            appId: "1:793269754970:web:49b0bd2b1e4ab446486663",
-            measurementId: "G-6CTcPDMY4Y"
-        };
+        // IMPORTANT: The firebaseConfig object is now dynamically loaded from the environment.
+        // This is the correct way to handle it to avoid hardcoding credentials.
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
         
+        if (!firebaseConfig) {
+            console.error("Firebase configuration not found. Please ensure it's provided by the environment.");
+            // You can add a fallback UI message here if needed
+        }
+
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
@@ -391,12 +387,9 @@
             }
         });
 
-        // The provided firebase token for sign-in, if available
-        const token = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-
         // Sign in with the provided custom token or anonymously if no token
-        if (token) {
-            signInWithCustomToken(auth, token).catch((error) => {
+        if (initialAuthToken) {
+            signInWithCustomToken(auth, initialAuthToken).catch((error) => {
                 console.error("Custom token sign-in failed:", error);
                 // Fallback to anonymous sign-in if custom token fails
                 signInAnonymously(auth);
@@ -407,4 +400,3 @@
     </script>
 </body>
 </html>
-
