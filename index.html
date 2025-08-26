@@ -1,34 +1,3 @@
-<!--
-
-  This is a complete, dynamic web application for Studypedia.
-
-  It includes Firebase for user authentication, content management, and
-
-  new download features based on payment, file uploads, or watching ads.
-
-
-
-  This single HTML file contains:
-
-  - Responsive layout with Tailwind CSS.
-
-  - Modals for user login/signup and document downloads.
-
-  - JavaScript logic to connect to Firebase.
-
-  - Functions to fetch and display content from Firestore.
-
-  - The academic sections are now dynamically loaded.
-
-  - Ad placeholders are included.
-
-
-
-  Changes in this version:
-
-  - Added <title> and <meta name="description"> tags for Search Engine Optimization (SEO).
-
--->
 
 <!DOCTYPE html>
 
@@ -36,41 +5,41 @@
 
 <head>
 
-  <meta charset="UTF-8">
+  <meta charset="UTF-8">
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- SEO: Updated Title and Description for better search engine ranking -->
+  <!-- SEO: Updated Title and Description for better search engine ranking -->
 
-  <title>Studypedia - Free Notes for Students in Uganda</title>
+  <title>Studypedia - Free Notes for Students in Uganda</title>
 
-  <meta name="description" content="Access free academic notes for Certificate, Diploma, and Bachelors students in Uganda. Study guides and resources available for everyone.">
+  <meta name="description" content="Access free academic notes for Certificate, Diploma, and Bachelors students in Uganda. Study guides and resources available for everyone.">
 
 
 
-  <!-- Tailwind CSS CDN for styling -->
+  <!-- Tailwind CSS CDN for styling -->
 
-  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
 
-  <style>
+  <style>
 
-    /* Use Inter font for a clean, modern look */
+    /* Use Inter font for a clean, modern look */
 
-    body {
+    body {
 
-      font-family: 'Inter', sans-serif;
+      font-family: 'Inter', sans-serif;
 
-    }
+    }
 
-  </style>
+  </style>
 
-  <!-- Firebase SDKs -->
+  <!-- Firebase SDKs -->
 
-  <script type="module" src="https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js"></script>
+  <script type="module" src="https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js"></script>
 
-  <script type="module" src="https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js"></script>
+  <script type="module" src="https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js"></script>
 
-  <script type="module" src="https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js"></script>
+  <script type="module" src="https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js"></script>
 
 </head>
 
@@ -78,921 +47,921 @@
 
 
 
-  <!-- Main layout container: Using flexbox to create a sidebar and a main content area -->
+  <!-- Main layout container: Using flexbox to create a sidebar and a main content area -->
 
-  <div class="flex flex-col lg:flex-row min-h-screen">
+  <div class="flex flex-col lg:flex-row min-h-screen">
 
 
 
-    <!--
+    <!--
 
-      Left Sidebar/Menu
+      Left Sidebar/Menu
 
-      This section is for navigation links to different academic levels.
+      This section is for navigation links to different academic levels.
 
-    -->
+    -->
 
-    <aside class="bg-slate-800 p-6 lg:p-8 lg:w-64 w-full flex-shrink-0 flex flex-col">
+    <aside class="bg-slate-800 p-6 lg:p-8 lg:w-64 w-full flex-shrink-0 flex flex-col">
 
-      <!-- Logo or Site Title -->
+      <!-- Logo or Site Title -->
 
-      <div class="mb-8">
+      <div class="mb-8">
 
-        <h2 class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-sky-500">
+        <h2 class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-sky-500">
 
-          Studypedia
+          Studypedia
 
-        </h2>
+        </h2>
 
-      </div>
+      </div>
 
 
 
-      <!-- User Authentication UI -->
+      <!-- User Authentication UI -->
 
-      <div id="auth-ui" class="space-y-4 mb-8">
+      <div id="auth-ui" class="space-y-4 mb-8">
 
-        <button id="auth-btn" class="w-full bg-indigo-600 text-white font-semibold py-2 px-4 rounded-full shadow-lg hover:bg-indigo-500 transition-colors">
+        <button id="auth-btn" class="w-full bg-indigo-600 text-white font-semibold py-2 px-4 rounded-full shadow-lg hover:bg-indigo-500 transition-colors">
 
-          Login / Signup
+          Login / Signup
 
-        </button>
+        </button>
 
-      </div>
+      </div>
 
 
 
-      <!-- Navigation Menu (dynamic content) -->
+      <!-- Navigation Menu (dynamic content) -->
 
-      <nav id="academic-nav" class="space-y-4 flex-grow">
+      <nav id="academic-nav" class="space-y-4 flex-grow">
 
-        <!-- Links will be dynamically inserted here -->
+        <!-- Links will be dynamically inserted here -->
 
-      </nav>
+      </nav>
 
 
 
-      <!--
+      <!--
 
-        AD SPACE IN SIDEBAR: Placeholder for an ad.
+        AD SPACE IN SIDEBAR: Placeholder for an ad.
 
-        Replace the entire div below with your Google AdSense ad code.
+        Replace the entire div below with your Google AdSense ad code.
 
-      -->
+      -->
 
-      <div class="mt-auto bg-gray-800 text-gray-400 p-4 rounded-xl flex items-center justify-center border border-gray-700">
+      <div class="mt-auto bg-gray-800 text-gray-400 p-4 rounded-xl flex items-center justify-center border border-gray-700">
 
-        <p class="text-sm font-semibold text-center">Google AdSense - Sidebar Ad</p>
+        <p class="text-sm font-semibold text-center">Google AdSense - Sidebar Ad</p>
 
-      </div>
+      </div>
 
-    </aside>
+    </aside>
 
 
 
-    <!-- Main Content Area (dynamic content) -->
+    <!-- Main Content Area (dynamic content) -->
 
-    <main id="main-content" class="flex-grow p-6 lg:p-12 overflow-y-auto">
+    <main id="main-content" class="flex-grow p-6 lg:p-12 overflow-y-auto">
 
-      <!-- Welcome Section -->
+      <!-- Welcome Section -->
 
-      <div class="bg-slate-800 p-8 rounded-2xl shadow-2xl mb-8">
+      <div class="bg-slate-800 p-8 rounded-2xl shadow-2xl mb-8">
 
-        <h1 class="text-4xl md:text-5xl font-extrabold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-sky-500">
+        <h1 class="text-4xl md:text-5xl font-extrabold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-sky-500">
 
-          Welcome, students of Uganda!
+          Welcome, students of Uganda!
 
-        </h1>
+        </h1>
 
-        <p class="text-lg md:text-xl text-gray-300 leading-relaxed">
+        <p class="text-lg md:text-xl text-gray-300 leading-relaxed">
 
-          Find and share academic notes for your classes.
+          Find and share academic notes for your classes.
 
-        </p>
+        </p>
 
-      </div>
+      </div>
 
-      <!-- Dynamically loaded academic sections will be inserted here -->
+      <!-- Dynamically loaded academic sections will be inserted here -->
 
-    </main>
+    </main>
 
-  </div>
+  </div>
 
-  
+  
 
-  <!--
+  <!--
 
-    Authentication Modal
+    Authentication Modal
 
-  -->
+  -->
 
-  <div id="auth-modal" class="fixed inset-0 bg-black bg-opacity-75 hidden items-center justify-center p-4 z-50">
+  <div id="auth-modal" class="fixed inset-0 bg-black bg-opacity-75 hidden items-center justify-center p-4 z-50">
 
-    <div class="bg-slate-800 p-8 rounded-2xl shadow-2xl w-full max-w-sm">
+    <div class="bg-slate-800 p-8 rounded-2xl shadow-2xl w-full max-w-sm">
 
-      <div class="flex justify-between items-center mb-4">
+      <div class="flex justify-between items-center mb-4">
 
-        <h3 id="auth-title" class="text-2xl font-bold">Login</h3>
+        <h3 id="auth-title" class="text-2xl font-bold">Login</h3>
 
-        <button id="close-modal-btn" class="text-gray-400 hover:text-white">&times;</button>
+        <button id="close-modal-btn" class="text-gray-400 hover:text-white">&times;</button>
 
-      </div>
+      </div>
 
-      <form id="auth-form" class="space-y-4">
+      <form id="auth-form" class="space-y-4">
 
-        <div>
+        <div>
 
-          <label for="email" class="block text-sm font-medium text-gray-300">Email address</label>
+          <label for="email" class="block text-sm font-medium text-gray-300">Email address</label>
 
-          <input type="email" id="email" required class="mt-1 block w-full rounded-md bg-slate-700 border-gray-600 text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+          <input type="email" id="email" required class="mt-1 block w-full rounded-md bg-slate-700 border-gray-600 text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
 
-        </div>
+        </div>
 
-        <div>
+        <div>
 
-          <label for="password" class="block text-sm font-medium text-gray-300">Password</label>
+          <label for="password" class="block text-sm font-medium text-gray-300">Password</label>
 
-          <input type="password" id="password" required class="mt-1 block w-full rounded-md bg-slate-700 border-gray-600 text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+          <input type="password" id="password" required class="mt-1 block w-full rounded-md bg-slate-700 border-gray-600 text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
 
-        </div>
+        </div>
 
-        <button type="submit" id="submit-btn" class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-500 transition-colors">Login</button>
+        <button type="submit" id="submit-btn" class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-500 transition-colors">Login</button>
 
-      </form>
+      </form>
 
-      <div class="mt-4 text-center">
+      <div class="mt-4 text-center">
 
-        <button id="toggle-auth-btn" class="text-sm text-indigo-400 hover:text-indigo-300">
+        <button id="toggle-auth-btn" class="text-sm text-indigo-400 hover:text-indigo-300">
 
-          Don't have an account? Sign Up
+          Don't have an account? Sign Up
 
-        </button>
+        </button>
 
-      </div>
+      </div>
 
-      <div id="message-box" class="mt-4 text-center p-2 rounded-md hidden"></div>
+      <div id="message-box" class="mt-4 text-center p-2 rounded-md hidden"></div>
 
-    </div>
+    </div>
 
-  </div>
+  </div>
 
 
 
-  <!--
+  <!--
 
-    Download Modal
+    Download Modal
 
-  -->
+  -->
 
-  <div id="download-modal" class="fixed inset-0 bg-black bg-opacity-75 hidden items-center justify-center p-4 z-50">
+  <div id="download-modal" class="fixed inset-0 bg-black bg-opacity-75 hidden items-center justify-center p-4 z-50">
 
-    <div class="bg-slate-800 p-8 rounded-2xl shadow-2xl w-full max-w-lg">
+    <div class="bg-slate-800 p-8 rounded-2xl shadow-2xl w-full max-w-lg">
 
-      <div class="flex justify-between items-center mb-6">
+      <div class="flex justify-between items-center mb-6">
 
-        <h3 class="text-2xl font-bold">Download Document</h3>
+        <h3 class="text-2xl font-bold">Download Document</h3>
 
-        <button id="close-download-modal-btn" class="text-gray-400 hover:text-white">&times;</button>
+        <button id="close-download-modal-btn" class="text-gray-400 hover:text-white">&times;</button>
 
-      </div>
+      </div>
 
 
 
-      <p class="text-gray-300 mb-6">Choose one of the following options to download this document:</p>
+      <p class="text-gray-300 mb-6">Choose one of the following options to download this document:</p>
 
 
 
-      <!-- Pay to Download Section -->
+      <!-- Pay to Download Section -->
 
-      <div class="bg-slate-700 p-6 rounded-lg mb-4">
+      <div class="bg-slate-700 p-6 rounded-lg mb-4">
 
-        <h4 class="text-xl font-semibold text-indigo-400 mb-2">Option 1: Pay to Download</h4>
+        <h4 class="text-xl font-semibold text-indigo-400 mb-2">Option 1: Pay to Download</h4>
 
-        <p class="text-gray-400 mb-4">Support Studypedia by paying for a monthly or yearly plan.</p>
+        <p class="text-gray-400 mb-4">Support Studypedia by paying for a monthly or yearly plan.</p>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-          <button id="pay-monthly-btn" class="bg-indigo-600 text-white py-3 px-6 rounded-md hover:bg-indigo-500 transition-colors">
+          <button id="pay-monthly-btn" class="bg-indigo-600 text-white py-3 px-6 rounded-md hover:bg-indigo-500 transition-colors">
 
-            UGX 10,000 / Monthly
+            UGX 10,000 / Monthly
 
-          </button>
+          </button>
 
-          <button id="pay-yearly-btn" class="bg-indigo-600 text-white py-3 px-6 rounded-md hover:bg-indigo-500 transition-colors">
+          <button id="pay-yearly-btn" class="bg-indigo-600 text-white py-3 px-6 rounded-md hover:bg-indigo-500 transition-colors">
 
-            UGX 50,000 / Yearly
+            UGX 50,000 / Yearly
 
-          </button>
+          </button>
 
-        </div>
+        </div>
 
-        <div id="payment-details" class="mt-4 text-center p-4 bg-slate-600 rounded-md hidden">
+        <div id="payment-details" class="mt-4 text-center p-4 bg-slate-600 rounded-md hidden">
 
-          <p class="font-bold">Please send money to:</p>
+          <p class="font-bold">Please send money to:</p>
 
-          <p class="text-lg font-mono text-white mt-2">+256756454646</p>
+          <p class="text-lg font-mono text-white mt-2">+256756454646</p>
 
-          <p class="font-bold">Name: KAIGWA AKRAM</p>
+          <p class="font-bold">Name: KAIGWA AKRAM</p>
 
-          <p class="text-sm text-gray-400 mt-2">After payment, a download link will be available after verification.</p>
+          <p class="text-sm text-gray-400 mt-2">After payment, a download link will be available after verification.</p>
 
-        </div>
+        </div>
 
-      </div>
+      </div>
 
 
 
-      <!-- Upload Documents Section -->
+      <!-- Upload Documents Section -->
 
-      <div class="bg-slate-700 p-6 rounded-lg mb-4">
+      <div class="bg-slate-700 p-6 rounded-lg mb-4">
 
-        <h4 class="text-xl font-semibold text-teal-400 mb-2">Option 2: Upload Documents</h4>
+        <h4 class="text-xl font-semibold text-teal-400 mb-2">Option 2: Upload Documents</h4>
 
-        <p class="text-gray-400 mb-4">Upload three of your own documents to get one free download.</p>
+        <p class="text-gray-400 mb-4">Upload three of your own documents to get one free download.</p>
 
-        <div class="flex items-center space-x-4">
+        <div class="flex items-center space-x-4">
 
-          <input type="file" id="document-upload" multiple class="block w-full text-sm text-gray-500
+          <input type="file" id="document-upload" multiple class="block w-full text-sm text-gray-500
 
-            file:mr-4 file:py-2 file:px-4
+            file:mr-4 file:py-2 file:px-4
 
-            file:rounded-full file:border-0
+            file:rounded-full file:border-0
 
-            file:text-sm file:font-semibold
+            file:text-sm file:font-semibold
 
-            file:bg-indigo-50 file:text-indigo-700
+            file:bg-indigo-50 file:text-indigo-700
 
-            hover:file:bg-indigo-100" />
+            hover:file:bg-indigo-100" />
 
-          <button id="upload-btn" class="bg-teal-600 text-white py-2 px-4 rounded-md hover:bg-teal-500 transition-colors">
+          <button id="upload-btn" class="bg-teal-600 text-white py-2 px-4 rounded-md hover:bg-teal-500 transition-colors">
 
-            Upload
+            Upload
 
-          </button>
+          </button>
 
-        </div>
+        </div>
 
-        <p id="upload-count" class="text-sm text-gray-400 mt-2 hidden">
+        <p id="upload-count" class="text-sm text-gray-400 mt-2 hidden">
 
-          Uploaded 0 of 3 documents.
+          Uploaded 0 of 3 documents.
 
-        </p>
+        </p>
 
-      </div>
+      </div>
 
 
 
-      <!-- Watch Ads Section -->
+      <!-- Watch Ads Section -->
 
-      <div class="bg-slate-700 p-6 rounded-lg">
+      <div class="bg-slate-700 p-6 rounded-lg">
 
-        <h4 class="text-xl font-semibold text-sky-400 mb-2">Option 3: Watch Ads</h4>
+        <h4 class="text-xl font-semibold text-sky-400 mb-2">Option 3: Watch Ads</h4>
 
-        <p class="text-gray-400 mb-4">Watch 10 ads to download a document for free.</p>
+        <p class="text-gray-400 mb-4">Watch 10 ads to download a document for free.</p>
 
-        <div class="flex items-center justify-between">
+        <div class="flex items-center justify-between">
 
-          <button id="watch-ad-btn" class="bg-sky-600 text-white py-3 px-6 rounded-md hover:bg-sky-500 transition-colors">
+          <button id="watch-ad-btn" class="bg-sky-600 text-white py-3 px-6 rounded-md hover:bg-sky-500 transition-colors">
 
-            Watch Ad (<span id="ad-counter">0</span> / 10)
+            Watch Ad (<span id="ad-counter">0</span> / 10)
 
-          </button>
+          </button>
 
-          <button id="download-link-ad" class="bg-green-600 text-white py-3 px-6 rounded-md hover:bg-green-500 transition-colors hidden">
+          <button id="download-link-ad" class="bg-green-600 text-white py-3 px-6 rounded-md hover:bg-green-500 transition-colors hidden">
 
-            Download
+            Download
 
-          </button>
+          </button>
 
-        </div>
+        </div>
 
-      </div>
+      </div>
 
-      
+      
 
-      <div id="download-message-box" class="mt-4 text-center p-2 rounded-md hidden"></div>
+      <div id="download-message-box" class="mt-4 text-center p-2 rounded-md hidden"></div>
 
-    </div>
+    </div>
 
-  </div>
+  </div>
 
 
 
 <script type="module">
 
-  // IMPORTANT: Replace the placeholder values below with your actual Firebase project configuration.
+  // IMPORTANT: Replace the placeholder values below with your actual Firebase project configuration.
 
-  const firebaseConfig = {
+  const firebaseConfig = {
 
-    apiKey: "YOUR_API_KEY",
+    apiKey: "YOUR_API_KEY",
 
-    authDomain: "YOUR_AUTH_DOMAIN",
+    authDomain: "YOUR_AUTH_DOMAIN",
 
-    projectId: "YOUR_PROJECT_ID",
+    projectId: "YOUR_PROJECT_ID",
 
-    storageBucket: "YOUR_STORAGE_BUCKET",
+    storageBucket: "YOUR_STORAGE_BUCKET",
 
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
 
-    appId: "YOUR_APP_ID"
+    appId: "YOUR_APP_ID"
 
-  };
+  };
 
 
 
-  // Import Firebase modules
+  // Import Firebase modules
 
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
 
-  import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
+  import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
 
-  import { getFirestore, collection, getDocs, doc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
+  import { getFirestore, collection, getDocs, doc, setDoc, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
 
 
 
-  // Initialize Firebase and get service handles
+  // Initialize Firebase and get service handles
 
-  const app = initializeApp(firebaseConfig);
+  const app = initializeApp(firebaseConfig);
 
-  const auth = getAuth(app);
+  const auth = getAuth(app);
 
-  const db = getFirestore(app);
+  const db = getFirestore(app);
 
 
 
-  // Get DOM elements
+  // Get DOM elements
 
-  const authBtn = document.getElementById('auth-btn');
+  const authBtn = document.getElementById('auth-btn');
 
-  const authModal = document.getElementById('auth-modal');
+  const authModal = document.getElementById('auth-modal');
 
-  const closeModalBtn = document.getElementById('close-modal-btn');
+  const closeModalBtn = document.getElementById('close-modal-btn');
 
-  const authForm = document.getElementById('auth-form');
+  const authForm = document.getElementById('auth-form');
 
-  const authTitle = document.getElementById('auth-title');
+  const authTitle = document.getElementById('auth-title');
 
-  const submitBtn = document.getElementById('submit-btn');
+  const submitBtn = document.getElementById('submit-btn');
 
-  const toggleAuthBtn = document.getElementById('toggle-auth-btn');
+  const toggleAuthBtn = document.getElementById('toggle-auth-btn');
 
-  const messageBox = document.getElementById('message-box');
+  const messageBox = document.getElementById('message-box');
 
-  const academicNav = document.getElementById('academic-nav');
+  const academicNav = document.getElementById('academic-nav');
 
-  const mainContent = document.getElementById('main-content');
+  const mainContent = document.getElementById('main-content');
 
-  
+  
 
-  // Download Modal Elements
+  // Download Modal Elements
 
-  const downloadModal = document.getElementById('download-modal');
+  const downloadModal = document.getElementById('download-modal');
 
-  const closeDownloadModalBtn = document.getElementById('close-download-modal-btn');
+  const closeDownloadModalBtn = document.getElementById('close-download-modal-btn');
 
-  const payMonthlyBtn = document.getElementById('pay-monthly-btn');
+  const payMonthlyBtn = document.getElementById('pay-monthly-btn');
 
-  const payYearlyBtn = document.getElementById('pay-yearly-btn');
+  const payYearlyBtn = document.getElementById('pay-yearly-btn');
 
-  const paymentDetails = document.getElementById('payment-details');
+  const paymentDetails = document.getElementById('payment-details');
 
-  const uploadBtn = document.getElementById('upload-btn');
+  const uploadBtn = document.getElementById('upload-btn');
 
-  const uploadCountEl = document.getElementById('upload-count');
+  const uploadCountEl = document.getElementById('upload-count');
 
-  const documentUpload = document.getElementById('document-upload');
+  const documentUpload = document.getElementById('document-upload');
 
-  const watchAdBtn = document.getElementById('watch-ad-btn');
+  const watchAdBtn = document.getElementById('watch-ad-btn');
 
-  const adCounterEl = document.getElementById('ad-counter');
+  const adCounterEl = document.getElementById('ad-counter');
 
-  const downloadLinkAd = document.getElementById('download-link-ad');
+  const downloadLinkAd = document.getElementById('download-link-ad');
 
-  const downloadMessageBox = document.getElementById('download-message-box');
+  const downloadMessageBox = document.getElementById('download-message-box');
 
 
 
-  // State
+  // State
 
-  let isLoginMode = true;
+  let isLoginMode = true;
 
-  let currentDownloadSectionId = null;
+  let currentDownloadSectionId = null;
 
 
 
-  // Function to show/hide the auth modal
+  // Function to show/hide the auth modal
 
-  function toggleAuthModal(show) {
+  function toggleAuthModal(show) {
 
-    if (show) {
+    if (show) {
 
-      authModal.classList.remove('hidden');
+      authModal.classList.remove('hidden');
 
-      authModal.classList.add('flex');
+      authModal.classList.add('flex');
 
-    } else {
+    } else {
 
-      authModal.classList.remove('flex');
+      authModal.classList.remove('flex');
 
-      authModal.classList.add('hidden');
+      authModal.classList.add('hidden');
 
-    }
+    }
 
-  }
+  }
 
 
 
-  // Function to show/hide the download modal
+  // Function to show/hide the download modal
 
-  function toggleDownloadModal(show, sectionId = null) {
+  function toggleDownloadModal(show, sectionId = null) {
 
-    if (show) {
+    if (show) {
 
-      currentDownloadSectionId = sectionId;
+      currentDownloadSectionId = sectionId;
 
-      downloadModal.classList.remove('hidden');
+      downloadModal.classList.remove('hidden');
 
-      downloadModal.classList.add('flex');
+      downloadModal.classList.add('flex');
 
-    } else {
+    } else {
 
-      currentDownloadSectionId = null;
+      currentDownloadSectionId = null;
 
-      downloadModal.classList.remove('flex');
+      downloadModal.classList.remove('flex');
 
-      downloadModal.classList.add('hidden');
+      downloadModal.classList.add('hidden');
 
-    }
+    }
 
-  }
+  }
 
 
 
-  // Function to display messages in the modal
+  // Function to display messages in the modal
 
-  function showMessage(element, text, isError = false) {
+  function showMessage(element, text, isError = false) {
 
-    element.textContent = text;
+    element.textContent = text;
 
-    element.classList.remove('hidden');
+    element.classList.remove('hidden');
 
-    element.classList.add(isError ? 'bg-red-900' : 'bg-green-900');
+    element.classList.add(isError ? 'bg-red-900' : 'bg-green-900');
 
-    element.classList.remove(isError ? 'bg-green-900' : 'bg-red-900');
+    element.classList.remove(isError ? 'bg-green-900' : 'bg-red-900');
 
-  }
+  }
 
 
 
-  // Handle Auth Form Submission
+  // Handle Auth Form Submission
 
-  authForm.addEventListener('submit', async (e) => {
+  authForm.addEventListener('submit', async (e) => {
 
-    e.preventDefault();
+    e.preventDefault();
 
-    const email = document.getElementById('email').value;
+    const email = document.getElementById('email').value;
 
-    const password = document.getElementById('password').value;
+    const password = document.getElementById('password').value;
 
-    showMessage(messageBox, 'Processing...', false);
+    showMessage(messageBox, 'Processing...', false);
 
 
 
-    try {
+    try {
 
-      if (isLoginMode) {
+      if (isLoginMode) {
 
-        await signInWithEmailAndPassword(auth, email, password);
+        await signInWithEmailAndPassword(auth, email, password);
 
-        showMessage(messageBox, 'Login successful!', false);
+        showMessage(messageBox, 'Login successful!', false);
 
-      } else {
+      } else {
 
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
 
-        // Create a new user document in Firestore
+        // Create a new user document in Firestore
 
-        await setDoc(doc(db, "users", userCredential.user.uid), {
+        await setDoc(doc(db, "users", userCredential.user.uid), {
 
-          uploaded_docs_count: 0,
+          uploaded_docs_count: 0,
 
-          downloaded_docs_count: 0,
+          downloaded_docs_count: 0,
 
-          ad_views: 0
+          ad_views: 0
 
-        });
+        });
 
-        showMessage(messageBox, 'Signup successful!', false);
+        showMessage(messageBox, 'Signup successful!', false);
 
-      }
+      }
 
-      toggleAuthModal(false);
+      toggleAuthModal(false);
 
-      authForm.reset();
+      authForm.reset();
 
-    } catch (error) {
+    } catch (error) {
 
-      showMessage(messageBox, `Error: ${error.message}`, true);
+      showMessage(messageBox, `Error: ${error.message}`, true);
 
-    }
+    }
 
-  });
+  });
 
 
 
-  // Toggle between Login and Signup modes
+  // Toggle between Login and Signup modes
 
-  toggleAuthBtn.addEventListener('click', () => {
+  toggleAuthBtn.addEventListener('click', () => {
 
-    isLoginMode = !isLoginMode;
+    isLoginMode = !isLoginMode;
 
-    authTitle.textContent = isLoginMode ? 'Login' : 'Signup';
+    authTitle.textContent = isLoginMode ? 'Login' : 'Signup';
 
-    submitBtn.textContent = isLoginMode ? 'Login' : 'Signup';
+    submitBtn.textContent = isLoginMode ? 'Login' : 'Signup';
 
-    toggleAuthBtn.textContent = isLoginMode ? "Don't have an account? Sign Up" : "Already have an account? Login";
+    toggleAuthBtn.textContent = isLoginMode ? "Don't have an account? Sign Up" : "Already have an account? Login";
 
-  });
+  });
 
 
 
-  // Close Modal Buttons
+  // Close Modal Buttons
 
-  closeModalBtn.addEventListener('click', () => toggleAuthModal(false));
+  closeModalBtn.addEventListener('click', () => toggleAuthModal(false));
 
-  closeDownloadModalBtn.addEventListener('click', () => {
+  closeDownloadModalBtn.addEventListener('click', () => {
 
-      toggleDownloadModal(false);
+      toggleDownloadModal(false);
 
-      paymentDetails.classList.add('hidden');
+      paymentDetails.classList.add('hidden');
 
-  });
+  });
 
 
 
-  // Handle Authentication State Changes
+  // Handle Authentication State Changes
 
-  onAuthStateChanged(auth, (user) => {
+  onAuthStateChanged(auth, (user) => {
 
-    if (user) {
+    if (user) {
 
-      // User is logged in
+      // User is logged in
 
-      authBtn.textContent = 'Logout';
+      authBtn.textContent = 'Logout';
 
-      authBtn.onclick = async () => {
+      authBtn.onclick = async () => {
 
-        await signOut(auth);
+        await signOut(auth);
 
-        // Reload page or update UI as needed
+        // Reload page or update UI as needed
 
-      };
+      };
 
-      loadAcademicContent(user.uid); // Pass user ID to load content and check status
+      loadAcademicContent(user.uid); // Pass user ID to load content and check status
 
-    } else {
+    } else {
 
-      // User is logged out
+      // User is logged out
 
-      authBtn.textContent = 'Login / Signup';
+      authBtn.textContent = 'Login / Signup';
 
-      authBtn.onclick = () => toggleAuthModal(true);
+      authBtn.onclick = () => toggleAuthModal(true);
 
-      // Clear dynamic content
+      // Clear dynamic content
 
-      academicNav.innerHTML = '';
+      academicNav.innerHTML = '';
 
-      const sections = mainContent.querySelectorAll('section');
+      const sections = mainContent.querySelectorAll('section');
 
-      sections.forEach(sec => sec.remove());
+      sections.forEach(sec => sec.remove());
 
-    }
+    }
 
-  });
+  });
 
 
 
-  // Function to dynamically load content from Firestore
+  // Function to dynamically load content from Firestore
 
-  async function loadAcademicContent(userId) {
+  async function loadAcademicContent(userId) {
 
-    try {
+    try {
 
-      const sectionsCollection = collection(db, "academic_sections");
+      const sectionsCollection = collection(db, "academic_sections");
 
-      const sectionsSnapshot = await getDocs(sectionsCollection);
+      const sectionsSnapshot = await getDocs(sectionsCollection);
 
-      
+      
 
-      // Clear existing dynamic content
+      // Clear existing dynamic content
 
-      academicNav.innerHTML = '';
+      academicNav.innerHTML = '';
 
-      const existingSections = mainContent.querySelectorAll('section');
+      const existingSections = mainContent.querySelectorAll('section');
 
-      existingSections.forEach(sec => sec.remove());
+      existingSections.forEach(sec => sec.remove());
 
-      
+      
 
-      // Get user data
+      // Get user data
 
-      const userRef = doc(db, "users", userId);
+      const userRef = doc(db, "users", userId);
 
-      const userDoc = await getDoc(userRef);
+      const userDoc = await getDoc(userRef);
 
-      const userData = userDoc.data();
+      const userData = userDoc.data();
 
 
 
-      // Create navigation links and content sections
+      // Create navigation links and content sections
 
-      sectionsSnapshot.forEach((document) => {
+      sectionsSnapshot.forEach((document) => {
 
-        const data = document.data();
+        const data = document.data();
 
-        const sectionId = document.id;
+        const sectionId = document.id;
 
-        
+        
 
-        // Create navigation link
+        // Create navigation link
 
-        const navItem = document.createElement('li');
+        const navItem = document.createElement('li');
 
-        navItem.innerHTML = `<a href="#${sectionId}" class="block p-3 rounded-lg hover:bg-slate-700 transition-colors duration-200">
+        navItem.innerHTML = `<a href="#${sectionId}" class="block p-3 rounded-lg hover:bg-slate-700 transition-colors duration-200">
 
-                               ${data.title}
+                               ${data.title}
 
-                            </a>`;
+                            </a>`;
 
-        academicNav.appendChild(navItem);
+        academicNav.appendChild(navItem);
 
 
 
-        // Create content section
+        // Create content section
 
-        const sectionEl = document.createElement('section');
+        const sectionEl = document.createElement('section');
 
-        sectionEl.id = sectionId;
+        sectionEl.id = sectionId;
 
-        sectionEl.classList.add('bg-slate-800', 'p-8', 'rounded-2xl', 'shadow-2xl', 'mb-8');
+        sectionEl.classList.add('bg-slate-800', 'p-8', 'rounded-2xl', 'shadow-2xl', 'mb-8');
 
-        sectionEl.innerHTML = `
+        sectionEl.innerHTML = `
 
-          <h2 class="text-3xl md:text-4xl font-bold mb-4 text-teal-400">
+          <h2 class="text-3xl md:text-4xl font-bold mb-4 text-teal-400">
 
-            ${data.title}
+            ${data.title}
 
-          </h2>
+          </h2>
 
-          <p class="text-lg text-gray-300 leading-relaxed">
+          <p class="text-lg text-gray-300 leading-relaxed">
 
-            ${data.content}
+            ${data.content}
 
-          </p>
+          </p>
 
-          <button class="mt-4 px-6 py-3 bg-green-600 text-white font-semibold rounded-full shadow-lg hover:bg-green-500 transition-colors download-btn">
+          <button class="mt-4 px-6 py-3 bg-green-600 text-white font-semibold rounded-full shadow-lg hover:bg-green-500 transition-colors download-btn">
 
-            Download
+            Download
 
-          </button>
+          </button>
 
-        `;
+        `;
 
-        mainContent.appendChild(sectionEl);
+        mainContent.appendChild(sectionEl);
 
-      });
+      });
 
-      
+      
 
-      // Add event listeners to the new download buttons
+      // Add event listeners to the new download buttons
 
-      document.querySelectorAll('.download-btn').forEach(btn => {
+      document.querySelectorAll('.download-btn').forEach(btn => {
 
-        btn.addEventListener('click', (e) => {
+        btn.addEventListener('click', (e) => {
 
-          const sectionId = e.target.closest('section').id;
+          const sectionId = e.target.closest('section').id;
 
-          toggleDownloadModal(true, sectionId);
+          toggleDownloadModal(true, sectionId);
 
-        });
+        });
 
-      });
+      });
 
-      
+      
 
-    } catch (error) {
+    } catch (error) {
 
-      console.error("Error loading academic content: ", error);
+      console.error("Error loading academic content: ", error);
 
-      showMessage(messageBox, "Error loading content. Check your Firebase setup.", true);
+      showMessage(messageBox, "Error loading content. Check your Firebase setup.", true);
 
-    }
+    }
 
-  }
+  }
 
 
 
-  // --- Download Modal Logic ---
+  // --- Download Modal Logic ---
 
 
 
-  // Handle Pay to Download
+  // Handle Pay to Download
 
-  payMonthlyBtn.addEventListener('click', () => {
+  payMonthlyBtn.addEventListener('click', () => {
 
-    paymentDetails.classList.remove('hidden');
+    paymentDetails.classList.remove('hidden');
 
-    showMessage(downloadMessageBox, 'You selected a monthly plan. Follow the instructions to complete payment.', false);
+    showMessage(downloadMessageBox, 'You selected a monthly plan. Follow the instructions to complete payment.', false);
 
-  });
+  });
 
-  
+  
 
-  payYearlyBtn.addEventListener('click', () => {
+  payYearlyBtn.addEventListener('click', () => {
 
-    paymentDetails.classList.remove('hidden');
+    paymentDetails.classList.remove('hidden');
 
-    showMessage(downloadMessageBox, 'You selected a yearly plan. Follow the instructions to complete payment.', false);
+    showMessage(downloadMessageBox, 'You selected a yearly plan. Follow the instructions to complete payment.', false);
 
-  });
+  });
 
 
 
-  // Handle Upload Documents
+  // Handle Upload Documents
 
-  uploadBtn.addEventListener('click', async () => {
+  uploadBtn.addEventListener('click', async () => {
 
-    const fileCount = documentUpload.files.length;
+    const fileCount = documentUpload.files.length;
 
-    if (fileCount >= 3) {
+    if (fileCount >= 3) {
 
-      showMessage(downloadMessageBox, 'Upload successful! You can now download.', false);
+      showMessage(downloadMessageBox, 'Upload successful! You can now download.', false);
 
-      // Here you would implement the actual download logic
+      // Here you would implement the actual download logic
 
-      // For this example, we'll just log it
+      // For this example, we'll just log it
 
-      console.log(`User uploaded ${fileCount} files for document: ${currentDownloadSectionId}`);
+      console.log(`User uploaded ${fileCount} files for document: ${currentDownloadSectionId}`);
 
-      alert("Download is ready!");
+      alert("Download is ready!");
 
-    } else {
+    } else {
 
-      showMessage(downloadMessageBox, `Please upload at least 3 documents. You have uploaded ${fileCount}.`, true);
+      showMessage(downloadMessageBox, `Please upload at least 3 documents. You have uploaded ${fileCount}.`, true);
 
-    }
+    }
 
-  });
+  });
 
-  
+  
 
-  // Show uploaded file count
+  // Show uploaded file count
 
-  documentUpload.addEventListener('change', () => {
+  documentUpload.addEventListener('change', () => {
 
-    uploadCountEl.textContent = `Uploaded ${documentUpload.files.length} of 3 documents.`;
+    uploadCountEl.textContent = `Uploaded ${documentUpload.files.length} of 3 documents.`;
 
-    uploadCountEl.classList.remove('hidden');
+    uploadCountEl.classList.remove('hidden');
 
-  });
+  });
 
 
 
-  // Handle Watch Ads
+  // Handle Watch Ads
 
-  let adCount = 0;
+  let adCount = 0;
 
-  watchAdBtn.addEventListener('click', () => {
+  watchAdBtn.addEventListener('click', () => {
 
-    if (adCount < 10) {
+    if (adCount < 10) {
 
-      adCount++;
+      adCount++;
 
-      adCounterEl.textContent = adCount;
+      adCounterEl.textContent = adCount;
 
-      showMessage(downloadMessageBox, `Ad ${adCount} of 10 viewed. Keep going!`, false);
+      showMessage(downloadMessageBox, `Ad ${adCount} of 10 viewed. Keep going!`, false);
 
-      if (adCount === 10) {
+      if (adCount === 10) {
 
-        showMessage(downloadMessageBox, 'You have watched all 10 ads! The download button is now available.', false);
+        showMessage(downloadMessageBox, 'You have watched all 10 ads! The download button is now available.', false);
 
-        downloadLinkAd.classList.remove('hidden');
+        downloadLinkAd.classList.remove('hidden');
 
-        watchAdBtn.classList.add('hidden');
+        watchAdBtn.classList.add('hidden');
 
-      }
+      }
 
-    }
+    }
 
-  });
+  });
 
 
 
-  downloadLinkAd.addEventListener('click', () => {
+  downloadLinkAd.addEventListener('click', () => {
 
-    alert("Download is ready!");
+    alert("Download is ready!");
 
-    console.log(`User watched 10 ads for document: ${currentDownloadSectionId}`);
+    console.log(`User watched 10 ads for document: ${currentDownloadSectionId}`);
 
-    toggleDownloadModal(false);
+    toggleDownloadModal(false);
 
-    // Reset ad counter for next download
+    // Reset ad counter for next download
 
-    adCount = 0;
+    adCount = 0;
 
-    adCounterEl.textContent = adCount;
+    adCounterEl.textContent = adCount;
 
-    downloadLinkAd.classList.add('hidden');
+    downloadLinkAd.classList.add('hidden');
 
-    watchAdBtn.classList.remove('hidden');
+    watchAdBtn.classList.remove('hidden');
 
-  });
+  });
 
 
 
-  // --- Setup Function (Run Once) ---
+  // --- Setup Function (Run Once) ---
 
-  
+  
 
-  // This is a setup function to show the user how to add initial data to Firestore.
+  // This is a setup function to show the user how to add initial data to Firestore.
 
-  async function addInitialData() {
+  async function addInitialData() {
 
-    try {
+    try {
 
-      const sections = [
+      const sections = [
 
-        {
+        {
 
-          id: 'certificate',
+          id: 'certificate',
 
-          title: 'Certificate',
+          title: 'Certificate',
 
-          content: 'This section contains notes and study materials for Certificate-level classes. You will find foundational subjects to help you succeed.',
+          content: 'This section contains notes and study materials for Certificate-level classes. You will find foundational subjects to help you succeed.',
 
-          download_url: 'https://example.com/certificate-notes.pdf'
+          download_url: 'https://example.com/certificate-notes.pdf'
 
-        },
+        },
 
-        {
+        {
 
-          id: 'diploma',
+          id: 'diploma',
 
-          title: 'Diploma',
+          title: 'Diploma',
 
-          content: 'Explore advanced topics and specialized subjects for your Diploma studies. Find in-depth notes and collaborate with your peers.',
+          content: 'Explore advanced topics and specialized subjects for your Diploma studies. Find in-depth notes and collaborate with your peers.',
 
-          download_url: 'https://example.com/diploma-notes.pdf'
+          download_url: 'https://example.com/diploma-notes.pdf'
 
-        },
+        },
 
-        {
+        {
 
-          id: 'bachelors',
+          id: 'bachelors',
 
-          title: 'Bachelors',
+          title: 'Bachelors',
 
-          content: 'Access comprehensive resources for Bachelors-level programs. Dive deep into research and expert-level notes to master your field.',
+          content: 'Access comprehensive resources for Bachelors-level programs. Dive deep into research and expert-level notes to master your field.',
 
-          download_url: 'https://example.com/bachelors-notes.pdf'
+          download_url: 'https://example.com/bachelors-notes.pdf'
 
-        }
+        }
 
-      ];
+      ];
 
 
 
-      for (const section of sections) {
+      for (const section of sections) {
 
-        await setDoc(doc(db, "academic_sections", section.id), {
+        await setDoc(doc(db, "academic_sections", section.id), {
 
-          title: section.title,
+          title: section.title,
 
-          content: section.content,
+          content: section.content,
 
-          download_url: section.download_url
+          download_url: section.download_url
 
-        });
+        });
 
-      }
+      }
 
-      console.log("Initial data added to Firestore!");
+      console.log("Initial data added to Firestore!");
 
-    } catch (e) {
+    } catch (e) {
 
-      console.error("Error adding document: ", e);
+      console.error("Error adding document: ", e);
 
-    }
+    }
 
-  }
+  }
 
 
 
-  // Uncomment the line below to add initial data to your Firestore database.
+  // Uncomment the line below to add initial data to your Firestore database.
 
-  // You only need to run this ONCE after you've set up your project.
+  // You only need to run this ONCE after you've set up your project.
 
-  // addInitialData();
+  // addInitialData();
 
 
 
@@ -1001,4 +970,3 @@
 </body>
 
 </html>
-
